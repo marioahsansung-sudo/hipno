@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HIPNO 4</title>
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+background:linear-gradient(#000000,#0f172a);
+font-family:Arial,sans-serif;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+overflow:hidden;
+}
+
+h1{
+font-size:50px;
+letter-spacing:6px;
+color:#7db7ff;
+margin-bottom:5px;
+}
+
+#mensaje{
+font-size:28px;
+margin:20px;
+height:40px;
+}
+
+#pulmones{
+font-size:140px;
+animation:respirar 8s infinite;
+margin:20px;
+}
+
+@keyframes respirar{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.4);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+.sonidos{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+margin-bottom:20px;
+}
+
+.sonidos button{
+
+padding:10px 15px;
+border:none;
+border-radius:10px;
+background:#222;
+color:white;
+cursor:pointer;
+
+}
+
+.controles{
+
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+margin-bottom:20px;
+
+}
+
+.controles button{
+
+padding:12px 18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+
+}
+
+.iniciar{
+background:#2f89ff;
+color:white;
+}
+
+.detener{
+background:#444;
+color:white;
+}
+
+.dormir{
+background:#111;
+color:#9bc4ff;
+}
+
+#estado{
+
+margin-top:10px;
+font-size:18px;
+color:#9bc4ff;
+
+}
+
+#volumen{
+
+width:250px;
+margin-top:15px;
+
+}
+
+.oculto{
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1 id="titulo">HIPNO</h1>
+
+<div id="mensaje">
+🌬️ Inhala por la nariz
+</div>
+
+<div id="pulmones">
+🫁
+</div>
+
+<div class="sonidos" id="selectorSonidos">
+
+<button onclick="seleccionar('Lluvia.mp3','Lluvia')">
+🌧️ Lluvia
+</button>
+
+<button onclick="seleccionar('Mar.mp3','Mar')">
+🌊 Mar
+</button>
+
+<button onclick="seleccionar('Tormenta.mp3','Tormenta')">
+⛈️ Tormenta
+</button>
+
+</div>
+
+<div class="controles" id="controles">
+
+<button class="iniciar" onclick="iniciar()">
+Comenzar
+</button>
+
+<button class="detener" onclick="detener()">
+Detener
+</button>
+
+<button onclick="pantallaCompleta()">
+Pantalla Completa
+</button>
+
+<button class="dormir" onclick="dormirAhora()">
+Dormir Ahora
+</button>
+
+</div>
+
+<input
+type="range"
+min="0"
+max="100"
+value="50"
+id="volumen"
+oninput="cambiarVolumen()">
+
+<div id="estado">
+Esperando...
+</div>
+
+<audio id="audio" loop>
+Lluvia.mp3
+</audio>
+
+<script>
+
+let respiracion;
+let apagado;
+
+function seleccionar(archivo,nombre){
+
+let audio =
+document.getElementById("audio");
+
+audio.pause();
+
+audio.innerHTML =
+'<source src="'+archivo+'" type="audio/mpeg">';
+
+audio.load();
+
+document.getElementById("estado").innerText =
+"Ambiente: " + nombre;
+
+}
+
+function iniciar(){
+
+let audio =
+document.getElementById("audio");
+
+audio.play();
+
+document.getElementById("estado").innerText =
+"Relajación en curso";
+
+clearInterval(respiracion);
+
+let inhalando = true;
+
+respiracion = setInterval(function(){
+
+if(inhalando){
+
+document.getElementById("mensaje").innerText =
+"🌬️ Inhala por la nariz";
+
+}
+else{
+
+document.getElementById("mensaje").innerText =
+"😮‍💨 Exhala por la boca";
+
+}
+
+inhalando = !inhalando;
+
+},4000);
+
+clearTimeout(apagado);
+
+apagado = setTimeout(function(){
+
+audio.pause();
+
+document.getElementById("estado").innerText =
+"Sesión finalizada";
+
+},1800000);
+
+}
+
+function detener(){
+
+let audio =
+document.getElementById("audio");
+
+audio.pause();
+
+audio.currentTime = 0;
+
+clearInterval(respiracion);
+
+document.getElementById("mensaje").innerText =
+"🌬️ Inhala por la nariz";
+
+document.getElementById("estado").innerText =
+"Detenido";
+
+}
+
+function cambiarVolumen(){
+
+let audio =
+document.getElementById("audio");
+
+audio.volume =
+document.getElementById("volumen").value / 100;
+
+}
+
+function pantallaCompleta(){
+
+if(document.documentElement.requestFullscreen){
+
+document.documentElement.requestFullscreen();
+
+}
+
+}
+
+function dormirAhora(){
+
+document.getElementById("titulo").classList.add("oculto");
+
+document.getElementById("selectorSonidos").classList.add("oculto");
+
+document.getElementById("controles").classList.add("oculto");
+
+document.getElementById("volumen").classList.add("oculto");
+
+document.getElementById("estado").classList.add("oculto");
+
+}
+
+window.onload = function(){
+
+cambiarVolumen();
+
+};
+
+</script>
+
+</body>
+
+</html>
